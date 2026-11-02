@@ -614,6 +614,18 @@ class BetaincinvTest(test_util.TestCase):
     self.assertEqual(dtype, result.dtype)
     self.assertAllEqual(y, result)
 
+  @parameterized.parameters(np.float32, np.float64)
+  def testBetaincinvMedian(self, dtype):
+    # `y == 0.5` used to skip the root finding and return the initial
+    # approximation, so medians were wrong.
+    a = np.array([2., 10., 0.3, 5.], dtype=dtype)
+    b = np.array([3., 1., 4., 0.7], dtype=dtype)
+    y = np.full_like(a, 0.5)
+    result = self.evaluate(special.betaincinv(a, b, y))
+    self.assertEqual(dtype, result.dtype)
+    self.assertAllClose(
+        scipy_special.betaincinv(a, b, y), result, atol=1e-5, rtol=1e-4)
+
   def testBetaincinvFloat16(self):
     a = tf.constant([0.4, 0.4, 0.4, 0.4, -1., 0.4, 0.4], dtype=tf.float16)
     b = tf.constant([0.6, 0.6, 0.6, 0.6, 0.6, -1., 0.6], dtype=tf.float16)

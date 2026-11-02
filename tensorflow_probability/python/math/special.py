@@ -750,7 +750,7 @@ def _betaincinv_computation(a, b, y):
       cond=lambda stop, *_: tf.reduce_any(~stop),
       body=root_finding_iteration,
       loop_vars=(
-          tf.equal(y, initial_low) | tf.equal(y, initial_high),
+          tf.equal(y, zero) | tf.equal(y, one),
           initial_low,
           initial_high,
           initial_candidate),
